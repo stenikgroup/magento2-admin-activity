@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @package Stenik\LoyaltyProgram
+ * @author  Stenik Magento Team <magedev@stenik.bg>
+ */
+-->
+
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="admin_activity_working_hours_configuration_email_template_for_login_activity"
+              label="Admin Activity - Email"
+              file="kiwicommerce_admin_login_activity.html" type="html"
+              module="KiwiCommerce_AdminActivity" area="frontend"/>
+
+</config>

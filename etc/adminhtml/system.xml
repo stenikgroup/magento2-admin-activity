@@ -104,6 +104,52 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
+
+            <group id="working_hours_configuration" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Working Hours Configuration</label>
+                <field id="enable_working_hours_activity_log" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Enable Working Hours Activity Log</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable this option if you want to send emails beyond the store's working hours.</comment>
+                </field>
+                <field id="working_days" translate="label" type="multiselect" sortOrder="25" showInDefault="30" showInWebsite="0" showInStore="0">
+                    <label>Working Days</label>
+                    <source_model>KiwiCommerce\AdminActivity\Model\Source\WorkingDays</source_model>
+                    <depends>
+                        <field id="enable_working_hours_activity_log">1</field>
+                    </depends>
+                    <comment>Choose the day(s) of the week when the store is open.</comment>
+                </field>
+                <field id="working_start_time" translate="label" type="text" sortOrder="40" showInDefault="20" showInWebsite="0" showInStore="0">
+                    <label>Working Start Time</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <depends>
+                        <field id="enable_working_hours_activity_log">1</field>
+                    </depends>
+                    <comment>Choose a time when the store opens. The time should be in the following format: EXAMPLE: "8:30"</comment>
+                </field>
+                <field id="working_end_time" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Working End Time</label>
+                    <depends>
+                        <field id="enable_working_hours_activity_log">1</field>
+                    </depends>
+                    <comment>Choose a time when the store opens. The time should be in the following format: EXAMPLE: "17:30"</comment>
+                </field>
+                <field id="emails_to_send_login_activity_information" translate="label" type="text" sortOrder="70" showInDefault="20" showInWebsite="0" showInStore="0">
+                    <label>Email to send login activity information</label>
+                    <depends>
+                        <field id="enable_working_hours_activity_log">1</field>
+                    </depends>
+                    <comment>"List the email addresses to which you want the email to be sent! The emails should be separated by commas."</comment>
+                </field>
+                <field id="email_template_for_login_activity" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <label>Email Template for Log activity</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <depends>
+                        <field id="enable_working_hours_activity_log">1</field>
+                    </depends>
+                </field>
+            </group>
         </section>
     </system>
 </config>

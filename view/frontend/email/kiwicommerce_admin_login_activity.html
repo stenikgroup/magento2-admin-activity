@@ -1,0 +1,28 @@
+<!--
+/**
+ * @package Stenik\LoyaltyProgram
+ * @author  Stenik Magento Team <magedev@stenik.bg>
+ */
+-->
+
+<!--@vars {
+"var data.username": "Username of logged-in user",
+"var data.email": "Email of logged-in user",
+"var data.loginDate": "Date of login",
+"var data.loginHour": "Hour of login"
+} @-->
+<!--@subject {{trans "Логване на потребител извън работно време"}} @-->
+
+<!-- Header -->
+{{template config_path="design/email/header_template"}}
+
+<span>
+    Име на потребителя: {{var data.username}}<br>
+    Имейл на потребителя: {{var data.email}}<br>
+    Дата на логване: {{var data.loginDate}}<br>
+    Час на логване: {{var data.loginHour}}<br>
+</span>
+
+<!-- Footer -->
+{{template config_path="design/email/footer_template"}}
+

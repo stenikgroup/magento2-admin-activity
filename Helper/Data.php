@@ -111,6 +111,38 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
      */
     const MODULE_SEO = 'admin_activity/module/seo';
 
+
+    /**
+     * @var string
+     */
+    const ENABLE_WORKING_HOURS_ACTIVITY_LOG = 'admin_activity/working_hours_configuration/enable_working_hours_activity_log';
+
+    /**
+     * @var string
+     */
+    const WORKING_DAYS = 'admin_activity/working_hours_configuration/working_days';
+
+    /**
+     * @var string
+     */
+    const WORKING_START_TIME = 'admin_activity/working_hours_configuration/working_start_time';
+
+    /**
+     * @var string
+     */
+    const WORKING_END_TIME = 'admin_activity/working_hours_configuration/working_end_time';
+
+    /**
+     * @var string
+     */
+    const EMAILS_TO_SEND_LOGIN_ACTIVITY_INFORMATION = 'admin_activity/working_hours_configuration/emails_to_send_login_activity_information';
+
+    /**
+     * @var string
+     */
+    const EMAIL_TEMPLATE_FOR_LOGIN_ACTIVITY = 'admin_activity/working_hours_configuration/email_template_for_login_activity';
+
+
     /**
      * @var \KiwiCommerce\AdminActivity\Model\Config
      */
@@ -242,5 +274,52 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             return true;
         }
         return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEnableWorkingHoursActivityLog(): bool
+    {
+        return (bool) $this->scopeConfig->isSetFlag(self::ENABLE_WORKING_HOURS_ACTIVITY_LOG, ScopeConfigInterface::SCOPE_TYPE_DEFAULT);
+
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getWorkingDays()
+    {
+       return $this->scopeConfig->getValue(self::WORKING_DAYS, ScopeConfigInterface::SCOPE_TYPE_DEFAULT);
+    }
+
+    /**
+     * @return string
+     */
+    public function getWorkingHourStart(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::WORKING_START_TIME, ScopeConfigInterface::SCOPE_TYPE_DEFAULT);
+
+    }
+
+    /**
+     * @return string
+     */
+    public function getWorkingHourEnd(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::WORKING_END_TIME, ScopeConfigInterface::SCOPE_TYPE_DEFAULT);
+    }
+
+    /**
+     * @return string
+     */
+    public function getEmailsToSendLoginActivityInformation(): string
+    {
+        return (string) $this->scopeConfig->getValue(self::EMAILS_TO_SEND_LOGIN_ACTIVITY_INFORMATION, ScopeConfigInterface::SCOPE_TYPE_DEFAULT);
+    }
+
+    public function getEmailTemplateForLoginActivity()
+    {
+        return $this->scopeConfig->getValue(self::EMAIL_TEMPLATE_FOR_LOGIN_ACTIVITY, ScopeConfigInterface::SCOPE_TYPE_DEFAULT);
     }
 }

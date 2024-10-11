@@ -20,6 +20,9 @@
     <preference for="KiwiCommerce\AdminActivity\Api\LoginRepositoryInterface" type="KiwiCommerce\AdminActivity\Model\LoginRepository" />
     <preference for="KiwiCommerce\AdminActivity\Api\Data\ActivitySearchResultsInterface" type="Magento\Framework\Api\SearchResults" />
 
+    <preference for="KiwiCommerce\AdminActivity\Service\EmailSenderInterface"
+                type="KiwiCommerce\AdminActivity\Service\EmailSender" />
+
     <!-- Type for admin_activity_listing_data_source -->
     <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
         <arguments>

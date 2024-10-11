@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * KiwiCommerce
  *
@@ -13,61 +15,99 @@
  */
 namespace KiwiCommerce\AdminActivity\Observer;
 
+use KiwiCommerce\AdminActivity\Action\CheckIsAllowedLoggingHour;
+use KiwiCommerce\AdminActivity\Api\LoginRepositoryInterface;
+use KiwiCommerce\AdminActivity\Helper\Benchmark;
+use KiwiCommerce\AdminActivity\Service\EmailSenderInterface;
+use \KiwiCommerce\AdminActivity\Helper\Data as DataHelper;
+use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\Event\ObserverInterface;
-use \KiwiCommerce\AdminActivity\Helper\Data as Helper;
+use Magento\Framework\Stdlib\DateTime;
+use Magento\Framework\Event\Observer;
 
 /**
  * Class LoginSuccess
- * @package KiwiCommerce\AdminActivity\Observer
  */
 class LoginSuccess implements ObserverInterface
 {
     /**
-     * @var Helper
+     * @var DataHelper
      */
-    public $helper;
+    protected $dataHelper;
 
     /**
-     * @var \KiwiCommerce\AdminActivity\Api\LoginRepositoryInterface
+     * @var LoginRepositoryInterface
      */
-    public $loginRepository;
+    protected $loginRepository;
 
     /**
-     * @var \KiwiCommerce\AdminActivity\Helper\Benchmark
+     * @var Benchmark
      */
-    public $benchmark;
+    protected $benchmark;
 
     /**
-     * LoginSuccess constructor.
-     * @param Helper $helper
-     * @param \KiwiCommerce\AdminActivity\Api\LoginRepositoryInterface $loginRepository
-     * @param \KiwiCommerce\AdminActivity\Helper\Benchmark $benchmark
+     * @var TransportBuilder
+     */
+    protected $transportBuilder;
+
+    /**
+     * @var DateTime
+     */
+    protected $dateTime;
+
+    /**
+     * @var CheckIsAllowedLoggingHour
+     */
+    private $checkIsAllowedLoggingHour;
+
+    /**
+     * @var EmailSenderInterface
+     */
+    private $emailSender;
+
+    /**
+     * @param CheckIsAllowedLoggingHour $checkIsAllowedLoggingHour
+     * @param LoginRepositoryInterface  $loginRepository
+     * @param EmailSenderInterface      $emailSender
+     * @param TransportBuilder          $transportBuilder
+     * @param DataHelper                $dataHelper
+     * @param Benchmark                 $benchmark
+     * @param DateTime                  $dateTime
      */
     public function __construct(
-        Helper $helper,
-        \KiwiCommerce\AdminActivity\Api\LoginRepositoryInterface $loginRepository,
-        \KiwiCommerce\AdminActivity\Helper\Benchmark $benchmark
+        CheckIsAllowedLoggingHour   $checkIsAllowedLoggingHour,
+        LoginRepositoryInterface    $loginRepository,
+        EmailSenderInterface        $emailSender,
+        TransportBuilder            $transportBuilder,
+        DataHelper                  $dataHelper,
+        Benchmark                   $benchmark,
+        DateTime                    $dateTime
     ) {
-        $this->helper = $helper;
-        $this->loginRepository = $loginRepository;
-        $this->benchmark = $benchmark;
+        $this->checkIsAllowedLoggingHour    = $checkIsAllowedLoggingHour;
+        $this->loginRepository              = $loginRepository;
+        $this->emailSender                  = $emailSender;
+        $this->transportBuilder             = $transportBuilder;
+        $this->dataHelper                   = $dataHelper;
+        $this->benchmark                    = $benchmark;
+        $this->dateTime                     = $dateTime;
     }
-    
-    /**
-     * Login success
-     * @param \Magento\Framework\Event\Observer $observer
-     * @return void
-     */
-    public function execute(\Magento\Framework\Event\Observer $observer)
+
+    public function execute(Observer $observer)
     {
         $this->benchmark->start(__METHOD__);
-        if (!$this->helper->isLoginEnable()) {
+
+        if (!$this->dataHelper->isLoginEnable()) {
             return $observer;
         }
-        
-        $this->loginRepository
-            ->setUser($observer->getUser())
-            ->addSuccessLog();
+
+        if ($this->dataHelper->isEnableWorkingHoursActivityLog() && !$this->checkIsAllowedLoggingHour->execute()) {
+            date_default_timezone_set('Europe/Sofia');
+            $currentDate = date('Y-m-d');
+            $currentHour = date('H:i');
+            $this->emailSender->send($currentDate, $currentHour, $observer->getUser()->getName(), $observer->getUser()->getEmail());
+        }
+
+        $this->loginRepository->setUser($observer->getUser())->addSuccessLog();
         $this->benchmark->end(__METHOD__);
     }
 }
