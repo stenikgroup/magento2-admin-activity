@@ -12,11 +12,11 @@ use KiwiCommerce\AdminActivity\Helper\Data as DataHelper;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Mail\Template\TransportBuilder;
 use Magento\Framework\Exception\LocalizedException;
-use Stenik\Logger\Api\Data\JournalLoggerInterface;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\App\Area;
 use Magento\Store\Model\Store;
+use Psr\Log\LoggerInterface;
 
 /**
  * Class EmailSender
@@ -38,10 +38,10 @@ class EmailSender implements EmailSenderInterface
      */
     private $transportBuilder;
 
-    /**
-     * @var JournalLoggerInterface
+     /**
+     * @var LoggerInterface
      */
-    private $journalLogger;
+    private $logger;
 
     /**
      * @param JournalLoggerInterface $journalLogger
@@ -50,15 +50,15 @@ class EmailSender implements EmailSenderInterface
      * @param DataHelper             $dataHelper
      */
     public function __construct(
-        JournalLoggerInterface  $journalLogger,
         ScopeConfigInterface    $scopeConfig,
         TransportBuilder        $transportBuilder,
+        LoggerInterface         $logger,
         DataHelper              $dataHelper
     ) {
-        $this->journalLogger    = $journalLogger;
         $this->scopeConfig      = $scopeConfig;
         $this->transportBuilder = $transportBuilder;
         $this->dataHelper       = $dataHelper;
+        $this->logger           = $logger;
     }
 
     /**
@@ -95,15 +95,14 @@ class EmailSender implements EmailSenderInterface
                     $email
                 );
             } catch (LocalizedException $e) {
-                $this->journalLogger->logError(
-                    'kiwicommerce_admin_activity_working_day_end_email',
-                    'Invalid email or empty configuration field: ' . $email,
-                    __("Invalid email address found: %1", $email),
-                    'Loggin Date: ' . $date .
-                    ', Loggin Hour: ' . $hour .
-                    ', User Email: ' . $userEmail .
-                    ', Username: ' . $username
-                );
+                $this->logger->error(sprintf(
+                    'Invalid email address found: %s | Login Date: %s | Login Hour: %s | User Email: %s | Username: %s',
+                    $email,
+                    $date,
+                    $hour,
+                    $userEmail,
+                    $username
+                ));
             }
         }
     }
